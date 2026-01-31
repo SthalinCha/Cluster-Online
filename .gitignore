@@ -1,0 +1,6 @@
+backend/src/feature_vectors/
+venv/
+env/
+datasets/
+resultados/
+*.pt

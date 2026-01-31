@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  clustering-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: clustering-api
+    ports:
+      - "8001:8000"
+    volumes:
+      # Montar carpetas de datos para clustering real
+      - ./backend/src/feature_vectors:/app/src/feature_vectors:ro
+      - ./backend/datasets:/app/datasets:ro
+      - ./backend/resultados:/app/resultados:rw
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: clustering-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - clustering-api
+    restart: unless-stopped
+
+networks:
+  default:
+    driver: bridge

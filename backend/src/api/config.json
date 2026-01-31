@@ -1,0 +1,162 @@
+{
+  "hyperparameters": {
+    "clustering": {
+      "k": {
+        "description": "Número de clusters",
+        "type": "integer",
+        "default": 3,
+        "min": 2,
+        "max": 10
+      },
+      "m": {
+        "description": "Capacidad máxima por cluster",
+        "type": "integer", 
+        "default": 50,
+        "min": 1,
+        "max": 1000
+      },
+      "cluster_similarity_threshold": {
+        "description": "Umbral de similitud entre clusters",
+        "type": "float",
+        "default": 0.75,
+        "min": 0.1,
+        "max": 0.99
+      },
+      "subcluster_similarity_threshold": {
+        "description": "Umbral de similitud para subclusters",
+        "type": "float", 
+        "default": 0.85,
+        "min": 0.1,
+        "max": 0.99
+      },
+      "pair_similarity_maximum": {
+        "description": "Similitud máxima entre pares",
+        "type": "float",
+        "default": 0.95,
+        "min": 0.1,
+        "max": 0.99
+      },
+      "random_state": {
+        "description": "Semilla aleatoria para reproducibilidad",
+        "type": "integer",
+        "default": 42,
+        "min": 0,
+        "max": 9999
+      },
+      "normalize_data": {
+        "description": "Aplicar normalización unitaria",
+        "type": "boolean",
+        "default": true
+      },
+      "apply_pca": {
+        "description": "Aplicar reducción PCA",
+        "type": "boolean",
+        "default": false
+      },
+      "pca_components": {
+        "description": "Número de componentes PCA",
+        "type": "integer",
+        "default": 50,
+        "min": 2,
+        "max": 200
+      }
+    }
+  },
+  "models": {
+    "available": [
+      {
+        "id": "momentos_clasicos",
+        "name": "Momentos Clásicos",
+        "description": "Momentos regulares, centrales y normalizados",
+        "file": "momentos_clasicos.csv",
+        "features": 24,
+        "recommended_k": 3
+      },
+      {
+        "id": "momentos_hu",
+        "name": "Momentos de Hu", 
+        "description": "7 momentos invariantes de Hu",
+        "file": "momentos_hu.csv",
+        "features": 7,
+        "recommended_k": 3
+      },
+      {
+        "id": "momentos_zernike",
+        "name": "Momentos de Zernike",
+        "description": "Momentos de Zernike para análisis de forma",
+        "file": "momentos_zernike.csv",
+        "features": "variable",
+        "recommended_k": 3
+      },
+      {
+        "id": "sift_features",
+        "name": "SIFT Features",
+        "description": "Scale-Invariant Feature Transform",
+        "file": "sift_features.csv", 
+        "features": 512,
+        "recommended_k": 3
+      },
+      {
+        "id": "hog_features",
+        "name": "HOG Features",
+        "description": "Histogram of Oriented Gradients",
+        "file": "hog_features.csv",
+        "features": "variable",
+        "recommended_k": 3
+      },
+      {
+        "id": "cnn_embeddings",
+        "name": "CNN Embeddings (ResNet50)",
+        "description": "Embeddings de red convolucional preentrenada",
+        "file": "Embeddings_cnn.npy",
+        "features": 2048,
+        "recommended_k": 6
+      }
+    ]
+  },
+  "metrics": {
+    "external": [
+      {
+        "name": "ARI",
+        "full_name": "Adjusted Rand Index",
+        "description": "Mide similitud con etiquetas verdaderas",
+        "range": "[-1, 1]",
+        "better": "higher"
+      },
+      {
+        "name": "NMI", 
+        "full_name": "Normalized Mutual Information",
+        "description": "Información mutua normalizada",
+        "range": "[0, 1]",
+        "better": "higher"
+      },
+      {
+        "name": "AMI",
+        "full_name": "Adjusted Mutual Information", 
+        "description": "Información mutua ajustada",
+        "range": "[0, 1]", 
+        "better": "higher"
+      }
+    ],
+    "internal": [
+      {
+        "name": "Silhouette",
+        "description": "Cohesión interna vs separación",
+        "range": "[-1, 1]",
+        "better": "higher"
+      },
+      {
+        "name": "Davies-Bouldin",
+        "description": "Relación intra/inter cluster",
+        "range": "[0, ∞]",
+        "better": "lower"
+      },
+      {
+        "name": "Calinski-Harabasz",
+        "description": "Varianza inter vs intra cluster",
+        "range": "[0, ∞]",
+        "better": "higher"
+      }
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+numpy
+opencv-python
+pandas
+scikit-learn
+scikit-image
+scipy
+tensorflow
+keras
+ultralytics
+kagglehub
+matplotlib
+seaborn
+pillow
+requests
+python-dotenv
+python-multipart

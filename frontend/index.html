@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Clustering Online</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-project-diagram"></i>
+                <h1>Sistema de Clustering Online</h1>
+            </div>
+            <div class="status" id="connection-status">
+                <span class="status-indicator"></span>
+                <span class="status-text">Conectando...</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Configuración de Parámetros -->
+            <section class="card" id="config-section">
+                <div class="card-header">
+                    <i class="fas fa-cogs"></i>
+                    <h2>Configuración de Parámetros</h2>
+                </div>
+                <div class="card-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="k-input">
+                                <i class="fas fa-layer-group"></i>
+                                Número de Clusters (k)
+                            </label>
+                            <input type="number" id="k-input" value="3" min="2" max="10" class="form-control">
+                            <small class="form-text">Número de clusters a formar (2-10)</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="m-input">
+                                <i class="fas fa-database"></i>
+                                Capacidad por Cluster (m)
+                            </label>
+                            <input type="number" id="m-input" value="50" min="10" max="200" class="form-control">
+                            <small class="form-text">Capacidad máxima por cluster (10-200)</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="threshold-input">
+                                <i class="fas fa-balance-scale"></i>
+                                Umbral de Similitud
+                            </label>
+                            <input type="number" id="threshold-input" value="0.75" min="0.1" max="0.99" step="0.01" class="form-control">
+                            <small class="form-text">Umbral de similitud para clustering (0.1-0.99)</small>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn btn-primary" onclick="updateParams()">
+                            <i class="fas fa-save"></i>
+                            Actualizar Parámetros
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="resetParams()">
+                            <i class="fas fa-undo"></i>
+                            Restablecer
+                        </button>
+                    </div>
+
+                    <div id="params-result" class="result-container"></div>
+                </div>
+            </section>
+
+            <!-- Ejecutar Clustering -->
+            <section class="card" id="clustering-section">
+                <div class="card-header">
+                    <i class="fas fa-play-circle"></i>
+                    <h2>Ejecutar Clustering</h2>
+                </div>
+                <div class="card-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="model-select">
+                                <i class="fas fa-brain"></i>
+                                Modelo de Extracción
+                            </label>
+                            <select id="model-select" class="form-control">
+                                <option value="momentos_hu">Momentos de Hu</option>
+                                <option value="momentos_clasicos">Momentos Clásicos</option>
+                                <option value="momentos_zernike">Momentos de Zernike</option>
+                                <option value="sift_features">SIFT Features</option>
+                                <option value="hog_features">HOG Features</option>
+                                <option value="cnn_embeddings">CNN Embeddings</option>
+                            </select>
+                            <small class="form-text">Método de extracción de características</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dataset-select">
+                                <i class="fas fa-folder-open"></i>
+                                Dataset
+                            </label>
+                            <select id="dataset-select" class="form-control">
+                                <option value="1">Dataset 1</option>
+                                <option value="2">Dataset 2</option>
+                            </select>
+                            <small class="form-text">Conjunto de datos a procesar</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="flexible-select">
+                                <i class="fas fa-sliders-h"></i>
+                                Modo de Clustering
+                            </label>
+                            <select id="flexible-select" class="form-control" onchange="toggleCapacityOptions()">
+                                <option value="true">Flexible (clases desbalanceadas)</option>
+                                <option value="false">Restrictivo (tamaños exactos)</option>
+                                <option value="custom">Capacidades Personalizadas</option>
+                            </select>
+                            <small class="form-text">Tipo de estrategia de clustering</small>
+                        </div>
+                    </div>
+
+                    <!-- Sección de capacidades personalizadas -->
+                    <div id="custom-capacities-section" class="form-section" style="display: none;">
+                        <h4><i class="fas fa-cogs"></i> Configuración de Capacidades</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="num-clusters-input">
+                                    <i class="fas fa-layer-group"></i>
+                                    Número de Clusters
+                                </label>
+                                <input type="number" id="num-clusters-input" value="3" min="2" max="10" class="form-control" onchange="generateCapacityInputs()">
+                                <small class="form-text">Cantidad de clusters a crear</small>
+                            </div>
+                        </div>
+                        <div id="capacity-inputs" class="capacity-inputs-grid">
+                            <!-- Los inputs de capacidad se generan dinámicamente -->
+                        </div>
+                        <div class="capacity-info">
+                            <span>Total de capacidad: <strong id="total-capacity">0</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn btn-success btn-large" onclick="executeClustering()">
+                            <i class="fas fa-rocket"></i>
+                            Ejecutar Clustering
+                        </button>
+                        </button>
+                    </div>
+
+                    <div id="clustering-result" class="result-container"></div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2026 Sistema de Clustering Online - Desarrollado con FastAPI y tecnologías modernas</p>
+        </footer>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Procesando...</p>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script src="js/config.js"></script>
+    <script src="js/validation.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/display.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
