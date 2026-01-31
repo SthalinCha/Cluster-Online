@@ -1,6 +1,9 @@
 // Configuración global de la aplicación
 const CONFIG = {
-    API_BASE: 'http://localhost:8001',
+    // Detectar automáticamente si estamos en local o producción
+    API_BASE: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:8001'  // Local
+        : 'https://cluster-online.onrender.com',  // Producción
     RETRY_ATTEMPTS: 3,
     RETRY_DELAY: 1000,
     DEFAULT_PARAMS: {
