@@ -54,15 +54,15 @@ def features_hog(img_gray):
     # Extraer HOG
     features = hog(
         img_gray,
-        orientations=9,
-        pixels_per_cell=(8, 8),
+        orientations=6,
+        pixels_per_cell=(16, 16),
         cells_per_block=(2, 2),
         block_norm="L2-Hys",
         visualize=False,
         feature_vector=True
     )
     
-    return features.astype(np.float64)
+    return features.astype(np.float32)
 
 def generar_datasets_hog(data_root="data", out_dir="data/features"):
     """
